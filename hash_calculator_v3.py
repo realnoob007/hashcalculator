@@ -5,9 +5,12 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 
 def sm3_hash_file(file_path):
+    print("sm3 start")
     with open(file_path, 'rb') as file:
-        data = file.read()  # Read the entire file into memory
-        return sm3.sm3_hash(func.bytes_to_list(data)).hex()
+        data = file.read()
+        sm3_result = sm3.sm3_hash(func.bytes_to_list(data)).hex()
+        print("sm3 finish")
+        return sm3_result
 
 def calculate_file_hash(filename, hash_algorithm):
     block_size = 1048576  # 1 MB
@@ -16,14 +19,16 @@ def calculate_file_hash(filename, hash_algorithm):
         return sm3_hash_file(filename)
     else:
         hash_obj = hash_algorithm()
+        print(hash_algorithm + " start")
         with open(filename, 'rb') as file:
             for chunk in iter(lambda: file.read(block_size), b""):
                 hash_obj.update(chunk)
+        print(hash_algorithm + " finish")
         return hash_obj.hexdigest()
 
 
 def main():
-    file_path = 'large_test_file.bin'
+    file_path = 'large_test_file.txt'
 
     if not os.path.exists(file_path):
         return "请检查文件路径"
